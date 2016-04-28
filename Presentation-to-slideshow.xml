@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<Module>
+  <ModulePrefs title="Slideshow maker (using Google Slides)" title_url="http://www.steegle.com/websites/google-sites-howtos/docs-presentation-slider-gadget" description="A gadget to add a slick animation, slideshow or slider on a Google Site using a Google Slide." thumbnail="https://lh3.googleusercontent.com/-JzItNuQUbxU/Uq96uqrxrVI/AAAAAAAAHHE/l-cu2Bp0yvY/w120-h60-no/slideshow-maker-icon.png" screenshot="https://lh6.googleusercontent.com/-t5zaalZ8IKY/UqmnUa2btCI/AAAAAAAAHDQ/afGhslwTNGc/w400-h177-no/Slideshow+Maker.png" width="80%" height="200" author="Romain Vialard" author_email="romain.vialard@gmail.com" author_photo="https://lh5.googleusercontent.com/-jCtTYPxmFpI/AAAAAAAAAAI/AAAAAAAABwI/rhjzYu2nA2Y/s250-c-k/photo.jpg" author_link="https://plus.google.com/u/0/116263732197316259248/about">
+  <Require feature="setprefs" />
+  </ModulePrefs>
+  <UserPref name="url" display_name="Link to the presentation" required="true"/>
+  <UserPref name="backgroundColor" display_name="Page background color" default_value="white" required="true"/>
+  <UserPref name="autoStart" display_name="Auto start" default_value="true" required="true"/>
+  
+<Content type="html" view="configuration" preferred_height="190">
+<![CDATA[
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+<div class="tab-content col-xs-11">
+  <div class="row">
+    <div class="col-xs-4">
+      <h3>Slideshow Maker</h3>
+    </div>
+    <div class="col-xs-1" style="padding-top:25px">
+      <a href="http://www.steegle.com/websites/google-sites-howtos/docs-presentation-slider-gadget" target="_blank" class="btn-lg"><span class="glyphicon glyphicon-question-sign"></span></a>
+    </div>
+    <div class="col-xs-2" style="padding-top:25px">
+      <div class="g-follow" data-annotation="bubble" data-height="20" data-href="//plus.google.com/u/0/116263732197316259248" data-rel="author"></div>
+    </div>
+    <div class="col-xs-2" style="padding-top:25px">
+      <div class="g-plusone" data-size="medium" data-href="https://sites.google.com/site/scriptsexamples/"></div>
+    </div>
+    <div class="col-xs-2"  style="padding-top:15px">
+    <button type="button" class="btn btn-success" id="button_save" onclick="savePrefs();">Save</button>
+  </div>
+</div>
+<hr>
+<form class="form-horizontal" role="form">
+  <div class="form-group small">
+    <label for="url" class="col-xs-3 control-label">Link to the presentation</label>
+    <div class="col-xs-7">
+      <input class="form-control input-sm" id="url" placeholder="Enter url">
+    </div>
+  </div>
+  <div class="form-group small">
+    <label for="backgroundColor" class="col-xs-3 control-label">Page background color</label>
+    <div class="col-xs-2">
+      <input class="form-control input-sm" id="backgroundColor" value="white">
+    </div>
+  </div>
+  <div class="form-group small">
+    <label for="autoStart" class="col-xs-3 control-label">Auto Start</label>
+    <div class="col-xs-2">
+      <input class="form-control input-sm" id="autoStart" value="true">
+    </div>
+  </div>
+</form>
+</div>
+<script>
+var prefs = new gadgets.Prefs();
+function displayParameters() {
+  if (prefs.getString('url') != '') $('#url').val(prefs.getString('url'));
+  if (prefs.getString('backgroundColor') != '') $('#backgroundColor').val(prefs.getString('backgroundColor'));
+  if (prefs.getString('autoStart') == 'false') {
+    $('#autoStart').val('false');
+  }
+  else {
+    $('#autoStart').val('true');
+  }
+}
+gadgets.util.registerOnLoadHandler(displayParameters);
+function savePrefs() {
+  $('.btn').button('loading');
+  setTimeout(function () {
+    $('.btn').button('reset');
+  }, 1000);
+  if ($('#url').val() != '') prefs.set('url', $('#url').val());  
+  else prefs.set('url', 'https://docs.google.com/presentation/d/1eJcNeLPN2Cug0pF2bVWpA4jLtdBeKhMrLroNK-twXB0/embed?start=true&amp;loop=true&amp;delayms=5000');
+  prefs.set('backgroundColor', $('#backgroundColor').val());
+  if($('#autoStart').val() == 'false') prefs.set('autoStart', 'false');
+  else prefs.set('autoStart', 'true');
+}
+(function () {
+  var po = document.createElement('script');
+  po.type = 'text/javascript';
+  po.async = true;
+  po.src = 'https://apis.google.com/js/platform.js';
+  var s = document.getElementsByTagName('script')[0];
+  s.parentNode.insertBefore(po, s);
+})();
+</script>
+]]>
+</Content>
+
+<Content type="html" view="default">
+  <![CDATA[
+<style type="text/css"> body {background:transparent;} </style> 
+<div id="container"></div> 
+<script type="text/javascript"> 
+//////////////////////////////////////////////
+// Track gadget usage with GOOGLE ANALYTICS
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', "UA-17877121-2", 'auto', {'name': 'slideshowGadgetTracking'});
+ga('slideshowGadgetTracking.send', 'event', 'Slideshow Maker', 'Loaded', document.referrer.split('?')[0], 0);
+/////////////////////////////////////////////////
+var prefs = new gadgets.Prefs(); 
+var url = prefs.getString("url")+'&';
+var docId = url.match(/id=([^\&]+)&/);
+if(docId != null) docId = docId[1];
+else docId = url.match(/presentation\/d\/([^\/]+)\//)[1];
+var loop = url.match(/loop=([^\&]+)&/)[1];
+var delay = url.match(/delayms=([^\&]+)&/)[1];
+var backgroundColor = prefs.getString("backgroundColor");
+var width = document.body.clientWidth;
+var height = width*4/5;
+var domain = url.match(/a\/[^\/]+\//);
+domain = (domain != null)?domain[0]:"";
+var autostart = 'true';
+if(prefs.getString("autoStart") == 'false') autostart = 'false';
+var content = "<iframe width='" + width + "' height='" + height + "' scrolling='no' frameBorder='0' allowtransparency='true' src='https://docs.google.com/" + domain + "presentation/d/" + docId + "/embed?start=" + autostart + "&loop=" + loop + "&delayms=" + delay + "'><\/iframe>"; 
+// Hide borders
+var topBorderHeight = 8;
+if(navigator.userAgent.search('Chrome') != -1) topBorderHeight+= 2;
+if(width > 855) {  
+  topBorderHeight+= 4;
+}
+if(navigator.userAgent.search('iPad') != -1) content = "<div style='overflow: auto; background-color:" + backgroundColor +";'>"+ content +"</div>";
+content+= "<div style='position: absolute;top:0px;left:0px;font-size:" + topBorderHeight + "px;background-color:" + backgroundColor + ";width:" + width + "px;height:" + topBorderHeight + "px'></div>";
+content+= "<div style='position: absolute;top:0px;left:0px;background-color:" + backgroundColor + ";width:2px;height:" + height + "px'>&nbsp;</div>";
+content+= "<div style='position: absolute;top:0px;right:0px;background-color:" + backgroundColor + ";width:2px;height:" + height + "px'>&nbsp;</div>";
+content+= "<img src='https://lh4.googleusercontent.com/-TA1iUWIStAA/U4mQJgL1kPI/AAAAAAAAIvE/V4OIyRERgP8/s1-no/counter.png' style='position:absolute;left:0px;top:0px;z-index:-1;'/>";
+document.getElementById("container").innerHTML = content;
+</script>
+<html><head><title>Animation</title></head><body style="background-color:transparent;"><div id="container"></body></html>
+  ]]>
+</Content>
+</Module>

@@ -1,0 +1,693 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<Module>
+  <ModulePrefs title=" __UP_title__ ">
+	<Require feature="setprefs" />
+	<Require feature="dynamic-height"/>
+	<Locale lang="all">
+     <msg name="Lang">EN</msg>
+     <msg name="Gadget_Title">News Content Slider</msg>
+     <msg name="Gadget_Description">An easy way to display a slider with news content</msg>
+   </Locale>
+	 <Locale lang="fr">
+     <msg name="Lang">FR</msg>
+     <msg name="Gadget_Title">News Content Slider</msg>
+     <msg name="Gadget_Description">An easy way to display a slider with news content</msg>
+   </Locale>
+	</ModulePrefs>
+	
+  <UserPref name="url" display_name="Google spreadsheet key" required="true"/>
+  <UserPref name="sheet" display_name="Data sheet name" default_value="Sheet1" required="true"/>
+  <UserPref name="template" display_name="Template's sheet name" default_value="Template" required="true"/>
+  <UserPref name="rangeData" display_name="Range of data in data sheet" default_value="A1:H" required="true"/>
+	<UserPref name="nbRowHeader" display_name="Number of rows that are header rows" default_value="1" required="true"/>
+  <UserPref name="cellTemplate" display_name="Template's cell" default_value="A2" required="true"/>
+  <UserPref name="queryOpt" display_name="Query (experts users)" default_value=""/>
+  <UserPref name="autoStart" display_name="Auto play" datatype="bool" default_value="true"/>
+  <UserPref name="arrow" display_name="Display arrow navigation" datatype="bool" default_value="true"/>
+	<UserPref name="arrowType" display_name="Select arrow's type" datatype="enum">
+		<EnumValue value="a01" display_value="01"/>
+		<EnumValue value="a10" display_value="02"/>
+		<EnumValue value="flèche" display_value="03"/>
+		<EnumValue value="flèche2" display_value="04"/>
+	</UserPref>
+  <UserPref name="bullet" display_name="Display bullet navigation" datatype="bool" default_value="false"/>
+	<UserPref name="imageLoader" display_name="The url of the image shown as loader" default_value=""/>
+	<UserPref name="drag" display_name="Enable drag and drop" datatype="bool" default_value="true"/>
+	<UserPref name="dragOrient" display_name="Vertical drag and drop" datatype="bool" default_value="true"/>
+  <UserPref name="delay" display_name="Interval (in ms)" default_value="4000"/>
+  <UserPref name="slide" display_name="Slide duration (in ms)" default_value="500"/>
+	
+	<Content type="html" view="configuration" preferred_height="300">
+	<![CDATA[
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+	<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="https://sites.google.com/a/revevol.eu/xml-gadgets/home/jscolor.js">//{
+	</script>
+	
+	<ul class="nav nav-tabs col-xs-13">
+		<li class="active small">
+			<a href="#tab_data" id="label_tab_data" data-toggle="tab"></a>
+		</li>
+		<li class="small">
+			<a href="#tab_custom" id="label_tab_custom" data-toggle="tab"></a>
+		</li>
+		<li class="small">
+			<a href="#tab_routine" id="label_tab_routine" data-toggle="tab"></a>
+		</li>
+		<li>
+			<button type="button" class="btn btn-success" id="button_save" onclick="savePrefs();"></button>
+		</li>
+	</ul>
+	
+	<div class="tab-content col-xs-11">
+		<div class="tab-pane fade in active" id="tab_data">
+			<br>
+			<form class="form-horizontal" role="form">
+				<div class="form-group small">
+					<label id="label_url" for="url" class="col-xs-4 control-label"><span class="mandatory"></span></label>
+					<div class="col-xs-7">
+						<input class="form-control input-sm" id="url" placeholder="Enter the key">
+					</div>
+				</div>
+				<div class="form-group small">
+					<label id="label_sheet" for="sheet" class="col-xs-4 control-label"><span class="mandatory"></span></label>
+					<div class="col-xs-7">
+						<input class="form-control input-sm" id="sheet" placeholder="Enter the name">
+					</div>
+				</div>
+				<div class="form-group small">
+					<label id="label_template" for="template" class="col-xs-4 control-label"><span class="mandatory"></span></label>
+					<div class="col-xs-7">
+						<input class="form-control input-sm" id="template" value="Template">
+					</div>
+				</div>
+				<div class="form-group small">
+					<label id="label_range" for="rangeData" class="col-xs-4 control-label"><span class="mandatory"></span></label>
+					<div class="col-xs-7">
+						<input class="form-control input-sm" id="rangeData" value="A1:H">
+					</div>
+				</div>
+				<div class="form-group small">
+					<label id="label_cellTemplate" for="cellTemplate" class="col-xs-4 control-label"><span class="mandatory"></span></label>
+					<div class="col-xs-7">
+						<input class="form-control input-sm" id="cellTemplate" value="A2">
+					</div>
+				</div>
+				<div class="form-group small">
+					<label id="label_queryOpt" for="queryOpt" class="col-xs-4 control-label"></label>
+					<div class="col-xs-7">
+						<input class="form-control input-sm" id="queryOpt" value="">
+					</div>
+				</div>
+			</form>
+		</div>
+		
+		<div class="tab-pane fade" id="tab_custom">
+			<br>
+			<form class="form-horizontal" role="form">
+				<div class="form-group small">
+					<label id="label_arrow" for="arrow" class="col-xs-4 control-label"></label>
+					<div class="col-xs-2">
+						<input type="checkbox" class="input-sm" id="arrow" checked="true">
+					</div>
+				</div>
+				<div class="form-group small">
+					<label id="label_arrowType" for="arrowType" class="col-xs-4 control-label"></label>
+					<div class="col-xs-2">
+						<select class="form-control" id="arrowType">
+							<option value="a01">01</option>
+							<option value="a10">02</option>
+							<option value="flèche">03</option>
+							<option value="flèche2">04</option>
+						</select>
+					</div>
+				</div>
+				<div class="form-group small">
+					<label id="label_bullet" for="bullet" class="col-xs-4 control-label"></label>
+					<div class="col-xs-2">
+						<input type="checkbox" class="input-sm" id="bullet" checked="false">
+					</div>
+				</div>
+				<div class="form-group small">
+					<label id="label_imageLoader" for="imageLoader" class="col-xs-4 control-label"><span class="mandatory"></span></label>
+					<div class="col-xs-7">
+						<input class="form-control input-sm" id="imageLoader" value="">
+					</div>
+				</div>
+			</form>
+		</div>
+		
+		<div class="tab-pane fade" id="tab_routine">
+			<br>
+			<form class="form-horizontal" role="form">
+				<div class="form-group small">
+					<label id="label_autoStart" for="autoStart" class="col-xs-4 control-label"></label>
+					<div class="col-xs-2">
+						<input type="checkbox" class="input-sm" id="autoStart" checked="true">
+					</div>
+				</div>
+				<div class="form-group small">
+					<label id="label_drag" for="drag" class="col-xs-4 control-label"></label>
+					<div class="col-xs-2">
+						<input type="checkbox" class="input-sm" id="drag" checked="true">
+					</div>
+				</div>
+				<div class="form-group small">
+					<label id="label_dragOrient" for="dragOrient" class="col-xs-4 control-label"></label>
+					<div class="col-xs-2">
+						<input type="checkbox" class="input-sm" id="dragOrient" checked="true">
+					</div>
+				</div>
+				<div class="form-group small">
+					<label id="label_delay" for="delay" class="col-xs-4 control-label"></label>
+					<div class="col-xs-2">
+						<input class="form-control input-sm" id="delay" value="4000">
+					</div>
+				</div>
+				<div class="form-group small">
+					<label id="label_slide" for="slide" class="col-xs-4 control-label"></label>
+					<div class="col-xs-2">
+						<input class="form-control input-sm" id="slide" value="500">
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+	
+	<script>
+	//}
+	var prefs = new gadgets.Prefs();
+	
+	var lang = prefs.getMsg("Lang");
+	
+	var languages = {
+		en: {
+			"label_url": "Google spreadsheet key",
+			"label_sheet" : "Data's Sheet name",
+			"label_template" : "Template's sheet name",
+			"label_range" : "Range of data in data sheet",
+			"label_cellTemplate" : "Template's cell",
+			"label_autoStart" : "Auto play",
+			"label_arrow" : "Display arrow navigation",
+			"label_arrowType" : "Select arrow's type",
+			"label_bullet" : "Display bullet navigation",
+			"label_imageLoader" : "The url of the image shown as loader",
+			"label_drag" : "Enable drag and drop",
+			"label_dragOrient" : "Vertical drag and drop",
+			"label_delay" : "Interval (in ms)",
+			"label_slide" : "Slide duration (in ms)",
+			"label_tab_data" : "Data",
+			"label_tab_routine" : "Routine",
+			"label_tab_custom" : "Customization",
+			"label_queryOpt" : "Query (experts users)",
+			"button_save" : "Save"
+		},
+		fr: {
+			"label_url": "Clé du tableur",
+			"label_sheet" : "Nom de la feuille contenant les données",
+			"label_template" : "Nom de la feuille contenant le template",
+			"label_range" : "Plage des données",
+			"label_cellTemplate" : "Cellule contenant le template",
+			"label_autoStart" : "Démarrage automatique",
+			"label_arrow" : "Afficher les flèches de navigation",
+			"label_arrowType" : "Sélectionner un type de flèche",
+			"label_bullet" : "Afficher les boutons radio de navigation",
+			"label_imageLoader" : "L'url de l'image affichée au chargement",
+			"label_drag" : "Autoriser le drag and drop",
+			"label_dragOrient" : "Drag and drop vertical",
+			"label_delay" : "Délai entre news (en ms)",
+			"label_slide" : "Durée du changement entre 2 slide (en ms)",
+			"label_tab_data" : "Données",
+			"label_tab_routine" : "Routine",
+			"label_tab_custom" : "Personnalisation",
+			"label_queryOpt" : "Query (utilisateurs experts)",
+			"button_save" : "Sauvegarder"
+		}
+	}
+
+	if(lang == "FR")	languages = languages.fr;
+	else languages = languages.en;
+	$(".mandatory").each(function(){ $(this).prepend("<span style=\"color: red\">*</span>")});
+	for(label in languages){
+		$("#"+label).prepend(languages[label]);
+	}
+	
+	function displayParameters() {
+		if (prefs.getString('url') != '') $('#url').val(prefs.getString('url'));
+		if (prefs.getString('sheet') != '') $('#sheet').val(prefs.getString('sheet'));
+		if (prefs.getString('template') != '') $('#template').val(prefs.getString('template'));
+		if (prefs.getString('rangeData') != '') $('#rangeData').val(prefs.getString('rangeData'));
+		if (prefs.getString('cellTemplate') != '') $('#cellTemplate').val(prefs.getString('cellTemplate'));
+		
+		var queryOpt = prefs.getString('queryOpt');
+		queryOpt = queryOpt.replace(/&#39;/g, '\'').replace(/&#34;/g, '\'').replace(/&#60;/g, '<').replace(/&#62;/g, '>');
+		if (prefs.getString('queryOpt') != '') $('#queryOpt').val(queryOpt);
+		$('#autoStart').prop('checked', prefs.getBool('autoStart'));
+		$('#arrow').prop('checked', prefs.getBool('arrow'));
+		if (prefs.getString('arrowType') != '') $('#arrowType').val(prefs.getString('arrowType'));
+		$('#bullet').prop('checked', prefs.getBool('bullet'));
+		if (prefs.getString('imageLoader') != '') $('#imageLoader').val(prefs.getString('imageLoader'));
+		$('#drag').prop('checked', prefs.getBool('drag'));
+		$('#dragOrient').prop('checked', prefs.getBool('dragOrient'));
+		if (prefs.getString('delay') != '') $('#delay').val(prefs.getString('delay'));
+		if (prefs.getString('slide') != '') $('#slide').val(prefs.getString('slide'));
+	}
+	
+	gadgets.util.registerOnLoadHandler(displayParameters);
+	function savePrefs() {
+		$('.btn').button('loading');
+		setTimeout(function () {
+			$('.btn').button('reset');
+		}, 1000);
+		prefs.set('url', $('#url').val());
+		prefs.set('sheet', $('#sheet').val());
+		prefs.set('template', $('#template').val());
+		prefs.set('rangeData', $('#rangeData').val());
+		prefs.set('cellTemplate', $('#cellTemplate').val());
+		prefs.set('queryOpt', $('#queryOpt').val());
+		prefs.set('autoStart', $('#autoStart').prop('checked'));
+		prefs.set('arrow', $('#arrow').prop('checked'));
+		prefs.set('arrowType', $('#arrowType').val());
+		prefs.set('bullet', $('#bullet').prop('checked'));
+		prefs.set('imageLoader', $('#imageLoader').val());
+		prefs.set('drag', $('#drag').prop('checked'));
+		prefs.set('dragOrient', $('#dragOrient').prop('checked'));
+		prefs.set('delay', $('#delay').val());
+		prefs.set('slide', $('#slide').val());
+	}
+	(function () {
+		var po = document.createElement('script');
+		po.type = 'text/javascript';
+		po.async = true;
+		po.src = 'https://apis.google.com/js/platform.js';
+		var s = document.getElementsByTagName('script')[0];
+		s.parentNode.insertBefore(po, s);
+	})();
+	</script>
+	]]>
+	</Content>
+	
+  <Content type="html">
+  <![CDATA[ 
+	  
+			<head>
+				<meta charset="utf-8">
+				  <script type="text/javascript" src="https://www.google.com/jsapi">//{
+					</script>
+					<style>
+					
+            .bullet div, .bullet div:hover, .bullet .av
+            {
+                background: url("https://sites.google.com/a/revevol.eu/xml-gadgets/home/b05.png") no-repeat;
+                overflow:hidden;
+                cursor: pointer;
+            }
+            .bullet div { background-position: -5px -4px; }
+            .bullet div:hover, .jssorb03 .av:hover { background-position: -35px -4px; }
+            .bullet .av { background-position: -65px -4px; }
+            .bullet .dn, .jssorb03 .dn:hover { background-position: -95px -4px; }
+						
+						//Spinner
+						
+						.spinner{
+							margin: 100px auto;
+							width: 20px;
+							height: 20px;
+							position: relative;
+							display: none;
+						}
+						
+						a:visited{
+							color: inherit;
+						}
+
+						.container1 > div, .container2 > div, .container3 > div {
+							width: 6px;
+							height: 6px;
+							background-color: #333;
+
+							border-radius: 100%;
+							position: absolute;
+							-webkit-animation: bouncedelay 1.2s infinite ease-in-out;
+							animation: bouncedelay 1.2s infinite ease-in-out;
+							/* Prevent first frame from flickering when animation starts */
+							-webkit-animation-fill-mode: both;
+							animation-fill-mode: both;
+						}
+
+						.spinner .spinner-container {
+							position: absolute;
+							width: 100%;
+							height: 100%;
+						}
+
+						.container2 {
+							-webkit-transform: rotateZ(45deg);
+							transform: rotateZ(45deg);
+						}
+
+						.container3 {
+							-webkit-transform: rotateZ(90deg);
+							transform: rotateZ(90deg);
+						}
+
+						.circle1 { top: 0; left: 0; }
+						.circle2 { top: 0; right: 0; }
+						.circle3 { right: 0; bottom: 0; }
+						.circle4 { left: 0; bottom: 0; }
+
+						.container2 .circle1 {
+							-webkit-animation-delay: -1.1s;
+							animation-delay: -1.1s;
+						}
+
+						.container3 .circle1 {
+							-webkit-animation-delay: -1.0s;
+							animation-delay: -1.0s;
+						}
+
+						.container1 .circle2 {
+							-webkit-animation-delay: -0.9s;
+							animation-delay: -0.9s;
+						}
+
+						.container2 .circle2 {
+							-webkit-animation-delay: -0.8s;
+							animation-delay: -0.8s;
+						}
+
+						.container3 .circle2 {
+							-webkit-animation-delay: -0.7s;
+							animation-delay: -0.7s;
+						}
+
+						.container1 .circle3 {
+							-webkit-animation-delay: -0.6s;
+							animation-delay: -0.6s;
+						}
+
+						.container2 .circle3 {
+							-webkit-animation-delay: -0.5s;
+							animation-delay: -0.5s;
+						}
+
+						.container3 .circle3 {
+							-webkit-animation-delay: -0.4s;
+							animation-delay: -0.4s;
+						}
+
+						.container1 .circle4 {
+							-webkit-animation-delay: -0.3s;
+							animation-delay: -0.3s;
+						}
+
+						.container2 .circle4 {
+							-webkit-animation-delay: -0.2s;
+							animation-delay: -0.2s;
+						}
+
+						.container3 .circle4 {
+							-webkit-animation-delay: -0.1s;
+							animation-delay: -0.1s;
+						}
+
+						@-webkit-keyframes bouncedelay {
+							0%, 80%, 100% { -webkit-transform: scale(0.0) }
+							40% { -webkit-transform: scale(1.0) }
+						}
+
+						@keyframes bouncedelay {
+							0%, 80%, 100% { 
+								transform: scale(0.0);
+								-webkit-transform: scale(0.0);
+							} 40% { 
+								transform: scale(1.0);
+								-webkit-transform: scale(1.0);
+							}
+						}
+					</style>
+				
+				<script type="text/javascript">
+				//}
+					google.load('visualization', '1', {packages: ['controls']});
+				</script>
+			</head>
+			<body>
+				<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+				<script type="text/javascript" src="https://sites.google.com/a/revevol.eu/xml-gadgets/home/jssor.slider.mini.js"></script>
+				<script>
+					var prefs = new gadgets.Prefs();
+					function drawVisualization() {
+					
+							//get domain and key from url
+							var url = prefs.getString("url");
+							var key = url;
+							var domain = "";
+							if (url.indexOf('http') != -1) {
+								domain = url.match(/a\/[^\/]+\//);
+								domain = (domain != null) ? domain[0] : "";
+								key = url.match(/d\/([^\/]+)\//)[1];
+							}
+							
+							
+							var query = new google.visualization.Query('https://spreadsheets.google.com/' + domain + 'tq?key=' + key + '&headers=1&range=' + prefs.getString("rangeData") + '&sheet=' + prefs.getString("sheet"));
+							var options = prefs.getString("queryOpt");
+							if (options != '') {
+								options = options.replace(/&#39;/g, '\'').replace(/&#34;/g, '\'').replace(/&#60;/g, '<').replace(/&#62;/g, '>');
+								if (options.indexOf('#') == -1) query.setQuery(options);
+							}
+							query.send(handleQueryResponse);
+					}
+					
+					function handleQueryResponse(response){
+						if (response.isError()) {
+							console.log('Error in query: ' + response.getMessage() + ' ' + response.getDetailedMessage());
+							return false;
+						}
+						var data = response.getDataTable();
+						
+						//get domain and key from url
+						var url = prefs.getString("url");
+						var key = url;
+						var domain = "";
+						if (url.indexOf('http') != -1) {
+							domain = url.match(/a\/[^\/]+\//);
+							domain = (domain != null) ? domain[0] : "";
+							key = url.match(/d\/([^\/]+)\//)[1];
+						}
+						
+						
+						var query = new google.visualization.Query('https://spreadsheets.google.com/' + domain + 'tq?key=' + key + '&range='+prefs.getString("cellTemplate")+'&sheet=' + prefs.getString("template"));
+						query.send(handleQueryResponseForTemplate);
+						
+						function handleQueryResponseForTemplate(response) {
+						
+						  if (response.isError()) {
+								console.log('Error: ' + response.getMessage() + ' ' + response.getDetailedMessage());
+								return false;
+							}
+							
+							//get template
+						  var dataTemplate = response.getDataTable();
+						  var template = dataTemplate.getValue(0, 0);
+						 
+						  var nbDataCol = data.getNumberOfColumns();
+						  var nbDataRow = data.getNumberOfRows();
+							
+							
+						  var headersInTemplate = {}; // Contain all the info about markers and column concordance
+						  var headersInTemplateArray = template.match(/[$]{"[^"]+"}/g);
+							
+						  //get the corresponding column in the template
+							for (var i = 0 ;i < headersInTemplateArray.length; i++) {
+								if (!(headersInTemplateArray[i] in headersInTemplate)) {
+								 
+									var columnName = headersInTemplateArray[i].match(/[$]{"([^"]+)"}/)[1];
+								 
+									for (var j = 0; j < nbDataCol; j++) {
+										if (data.getColumnLabel(j) == columnName) {
+											headersInTemplate[headersInTemplateArray[i]] = {
+												value: columnName,
+												position: j
+											};
+											break;
+										}
+									}
+								 
+									if(j == nbDataCol){
+										console.log("Column "+columnName+" was not found");
+									}
+								}
+							}
+							 
+							//get css and javascript
+							var cssReg = /(<link[^>]*>|<style>(?:\n|.)*<\/style>|<script>(?:\n|.)*<\/script>)/g;
+							var css = template.match(cssReg);
+							if(css){
+								template = template.replace(cssReg, '');
+							}
+							 
+							// utilities to safely replace all (the user can use any character in his column headers) --> works
+							// http://stackoverflow.com/questions/1144783/replacing-all-occurrences-of-a-string-in-javascript
+							function escapeRegExp(string) {
+								return string.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
+							}
+							function replaceAll(string, find, replace) {
+								return string.replace(new RegExp(escapeRegExp(find), 'g'), replace);
+							}
+
+							// Replace markers for each line
+							for (var i = 0 ; i < nbDataRow; i++) {
+								var templateText = template;
+								for (markers in headersInTemplate) {
+									var dataToInsert = data.getFormattedValue(i, headersInTemplate[markers].position);
+									if (!dataToInsert) dataToInsert = "";
+									templateText = replaceAll(templateText, markers, dataToInsert);
+								}
+								var $slide = $("<div id=\"entry"+i+"\">"+templateText+"</div>");
+								$(".slides:last").append($slide);
+							}
+							
+							//add css and javascript client-side to head node
+							if(css){
+								for(var i = 0 ; i<css.length ; i++){
+									$("head").append($(css[i]));
+								}
+							}
+							//resizing the height of the gadget
+							$("#slides").height(gadgets.window.getViewportDimensions().height);
+							$("#slider1_container").height(gadgets.window.getViewportDimensions().height);
+							
+							var dragO = prefs.getBool("dragOrient") ? 3 : 1;
+							if(!prefs.getBool("drag")) {
+								dragO = 0;
+								$("#slides").css("cursor", "default");
+							}
+							
+							//Jssor options
+							var options = {
+								$DragOrientation: dragO,                                //[Optional] Orientation to drag slide, 0 no drag, 1 horizental, 2 vertical, 3 either, default value is 1 (Note that the $DragOrientation should be the same as $PlayOrientation when $DisplayPieces is greater than 1, or parking position is not 0)
+								$SlideDuration: prefs.getInt("slide"),                                //[Optional] Specifies default duration (swipe) for slide in milliseconds, default value is 500
+								$AutoPlay: prefs.getBool("autoStart"),
+								$AutoPlayInterval: prefs.getInt("delay"),
+								$HWA: false
+							};
+							
+							//add arrow navigation if specified by the user
+							if(prefs.getBool("arrow")){
+								options["$ArrowNavigatorOptions"] = {                       		//[Optional] Options to specify and enable arrow navigator or not
+									$Class: $JssorArrowNavigator$,              			//[Requried] Class to create arrow navigator instance
+									$ChanceToShow: 2,                            	    //[Required] 0 Never, 1 Mouse Over, 2 Always
+									$AutoCenter: 2,                                	  //[Optional] Auto center arrows in parent container, 0 No, 1 Horizontal, 2 Vertical, 3 Both, default value is 0
+									$Steps: 1                                       	//[Optional] Steps to go for each navigation request, default value is 1
+								};
+								//get the type of arrow to display
+								var arrowType = prefs.getString("arrowType");
+								$("head").append("<style> .arrowLeft, .arrowRight, .arrowLeftdn, .arrowRightdn{position: absolute;cursor: pointer;display: block;background: url(https://sites.google.com/a/revevol.eu/xml-gadgets/home/"+arrowType+".png) no-repeat;overflow:hidden;}.arrowLeft { background-position: -3px -33px; }.arrowRight { background-position: -63px -33px; }.arrowLeft:hover { background-position: -123px -33px; }.arrowRight:hover { background-position: -183px -33px; }.arrowLeftdn { background-position: -243px -33px; }.arrowRightdn { background-position: -303px -33px; }</style>");
+							}else{
+								$(".arrowLeft").each(function(){$(this).css("display", "none")});
+								$(".arrowRight").each(function(){$(this).css("display", "none")});
+							}
+							
+							//add bullet navigation if specified by the user
+							if(prefs.getBool("bullet")){
+								options["$BulletNavigatorOptions"] = {                                //[Optional] Options to specify and enable navigator or not
+                    $Class: $JssorBulletNavigator$,                       //[Required] Class to create navigator instance
+                    $ChanceToShow: 2,                               //[Required] 0 Never, 1 Mouse Over, 2 Always
+                    $ActionMode: 1,                                 //[Optional] 0 None, 1 act by click, 2 act by mouse hover, 3 both, default value is 1
+                    $AutoCenter: 1,                                 //[Optional] Auto center navigator in parent container, 0 None, 1 Horizontal, 2 Vertical, 3 Both, default value is 0
+                    $Steps: 1,                                      //[Optional] Steps to go for each navigation request, default value is 1
+                    $Lanes: 1,                                      //[Optional] Specify lanes to arrange items, default value is 1
+                    $SpacingX: 0,                                   //[Optional] Horizontal space between each item in pixel, default value is 0
+                    $SpacingY: 0,                                   //[Optional] Vertical space between each item in pixel, default value is 0
+                    $Orientation: 1                                 //[Optional] The orientation of the navigator, 1 horizontal, 2 vertical, default value is 1
+                };
+							}else{
+								$(".bullet").each(function(){$(this).css("display", "none")});
+							}
+							
+							var jssor_slider1 = new $JssorSlider$("slider1_container", options);
+							
+							//responsive code begin
+							function ScaleSlider() {
+								
+								var parentWidth = jssor_slider1.$Elmt.parentNode.clientWidth;
+								if (parentWidth) {
+										var sliderWidth = parentWidth;
+
+										//keep the slider width no more than the current size of the gadget
+										sliderWidth = Math.min(sliderWidth, $("body").width());
+
+										jssor_slider1.$ScaleWidth(sliderWidth);
+										gadgets.window.adjustHeight(jssor_slider1.$ScaleHeight());
+										
+								}
+								else
+										window.setTimeout(ScaleSlider, 30);
+							}
+
+							ScaleSlider();
+							
+							if (!navigator.userAgent.match(/(iPhone|iPod|iPad|BlackBerry|IEMobile)/)) {
+									$(window).bind('resize', ScaleSlider);
+									
+							}
+						}
+						
+					}
+					
+					jQuery(document).ready(function ($) {
+						drawVisualization();
+					});
+					
+				</script>
+				
+				<div id="slider1_container" style="position: relative; top: 0px; left: 0px; width: 1000px; height: 300px; ">
+					<!-- Loading Screen -->
+					<div u="loading" style="position: absolute; top: 0px; left:0px;width: 1000px; height: 300px">
+						<img id="loader" src="__UP_imageLoader__">
+						<div style="position:relative;margin:auto;top:100px;width: 50px; height: 50px;">
+							<div class="spinner" style="display: block__UP_imageLoader__">
+								<div class="spinner-container container1">
+									<div class="circle1"></div>
+									<div class="circle2"></div>
+									<div class="circle3"></div>
+									<div class="circle4"></div>
+								</div>
+								<div class="spinner-container container2">
+									<div class="circle1"></div>
+									<div class="circle2"></div>
+									<div class="circle3"></div>
+									<div class="circle4"></div>
+								</div>
+								<div class="spinner-container container3">
+									<div class="circle1"></div>
+									<div class="circle2"></div>
+									<div class="circle3"></div>
+									<div class="circle4"></div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="slides" id="slides" u="slides" style="cursor: move; position: absolute; left: 0px; top: 0px; width: 1000px; height: 300px; overflow: hidden;">
+				  </div>
+					
+					<!-- Arrow Left -->
+					<span u="arrowleft" class="arrowLeft" style="width: 55px; height: 55px; top: 123px; left: 8px;">
+					</span>
+					
+					<!-- Arrow Right -->
+					<span u="arrowright" class="arrowRight" style="width: 55px; height: 55px; top: 123px; right: 8px">
+					</span>
+					
+					<!-- bullet navigator container -->
+					<div u="navigator" class="bullet" style="position: absolute; bottom: 20px; left: 6px;">
+							<!-- bullet navigator item prototype -->
+							<div u="prototype" style="position: absolute; width: 21px; height: 21px; text-align:center; line-height:21px; color:white; font-size:12px;"></div>
+					</div>
+					<!-- Bullet Navigator Skin End -->
+			</body>
+	]]>
+  </Content>
+</Module>
