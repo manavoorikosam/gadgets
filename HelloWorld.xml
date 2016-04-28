@@ -4,8 +4,8 @@
     title="Debug Example"
     height="200"/>
   <UserPref
-    name="myname"
-    display_name="Name"
+    name="name"
+    display_name="MyName"
     required="true" />
   <UserPref
     name="mycolor"
