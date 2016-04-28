@@ -35,7 +35,28 @@
       function displayDate (){
         // DEBUG: is the function getting called?
         print("In displayDate function<br>");
-          
+        
+        //Sheet manipulation
+
+  var dir = DriveApp.getFoldersByName('Data').next();
+  
+  var page = SitesApp.getActivePage().getTitle();
+  
+  var file = dir.getFilesByName(page).next();
+  
+  var ss = SpreadsheetApp.open(file);
+  
+  var SheetPlaces = ss.getSheetByName("villagedetail");
+  
+  var data = SheetPlaces.getDataRange().getValues();
+  
+  Logger.log(page);
+
+
+        //end of sheet manipulation
+
+
+
         // Create Date object
         var today = new Date();
         // Get current time
